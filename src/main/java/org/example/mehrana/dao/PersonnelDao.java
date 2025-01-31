@@ -81,17 +81,4 @@ public class PersonnelDao {
                 .getSingleResult();
         return count > 0;
     }
-
-    // متد بستن منابع
-    public void close() {
-        if (entityManager.isOpen()) {
-            entityManager.close();
-        }
-    }
-
-    public static void closeEntityManagerFactory() {
-        if (entityManagerFactory.isOpen()) {
-            entityManagerFactory.close();
-        }
-    }
 }
