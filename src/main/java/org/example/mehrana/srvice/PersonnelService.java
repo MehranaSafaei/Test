@@ -5,8 +5,11 @@ import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.dto.PersonnelDto;
 import org.example.mehrana.exception.DuplicateDataException;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
+import org.example.mehrana.exception.NotFoundException;
 import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
+
+import java.util.Optional;
 
 public class PersonnelService {
 
@@ -36,4 +39,12 @@ public class PersonnelService {
     }
 
 
+    public void delete(long deleteNationalCode) throws NotFoundException {
+        Optional<Personnel> personnelTpDelete = personnelDao.findNationalCode(deleteNationalCode);
+        if (personnelTpDelete.isPresent()) {
+            personnelDao.delete(personnelTpDelete.get());
+        }else {
+            throw new NotFoundException();
+        }
+    }
 }

@@ -5,6 +5,7 @@ import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PersonnelDao implements CrudDao<Personnel> {
 
@@ -91,10 +92,22 @@ public class PersonnelDao implements CrudDao<Personnel> {
     }
 
     public boolean isNationalIdDuplicated(long nationalCode) {
-        Long count = entityManager.createQuery(
-                        "SELECT COUNT(p) FROM Personnel p WHERE p.nationalCode = :nationalCode", Long.class)
+        Long count = entityManager.createNamedQuery("CountByNationalCode", Long.class)
                 .setParameter("nationalCode", nationalCode)
                 .getSingleResult();
         return count > 0;
+    }
+
+
+    public Optional<Personnel> findByNationalCode(long nationalCode) {
+        try {
+            Personnel personnel = entityManager.createNamedQuery(
+                            "SelectByNationalCode", Personnel.class)
+                    .setParameter("nationalCode", nationalCode)
+                    .getSingleResult();
+            return Optional.ofNullable(personnel);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }
