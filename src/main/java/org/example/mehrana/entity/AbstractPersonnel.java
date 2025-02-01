@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @MappedSuperclass
-public class AbstractPersonnel {
+public class  AbstractPersonnel {
     private Long id;
     private String username;
     private String password;
