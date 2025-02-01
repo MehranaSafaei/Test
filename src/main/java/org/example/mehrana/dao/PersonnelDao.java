@@ -4,15 +4,19 @@ import jakarta.persistence.*;
 import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
 
-public class PersonnelDao {
+import java.util.List;
 
-    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("personnelUnit");
+public class PersonnelDao implements CrudDao<Personnel> {
+
+    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("PersonnelUnit");
+
     private final EntityManager entityManager;
 
     public PersonnelDao() {
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
+    @Override
     public void create(Personnel personnel) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
 
@@ -31,6 +35,10 @@ public class PersonnelDao {
             }
             throw e;
         }
+    }
+
+    public Personnel create(Personnel personnel, String nationalCode) throws DuplicateNationalCodeException {
+        return null;
     }
 
     public Personnel findById(Long id) {
@@ -54,6 +62,14 @@ public class PersonnelDao {
             }
             throw e;
         }
+    }
+
+    public Personnel delete(Personnel entity) {
+        return null;
+    }
+
+    public List<Personnel> findAll() {
+        return List.of();
     }
 
     public void delete(Long id) {

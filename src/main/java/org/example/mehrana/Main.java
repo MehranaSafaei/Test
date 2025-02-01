@@ -9,7 +9,8 @@ import org.example.mehrana.srvice.PersonnelService;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws SaveRecordException, DuplicateDataException, DuplicateNationalCodeException {
+    public static void main(String[] args) throws SaveRecordException, DuplicateNationalCodeException {
+
         PersonnelService personnelService = new PersonnelService();
 
         Scanner scanner = new Scanner(System.in);

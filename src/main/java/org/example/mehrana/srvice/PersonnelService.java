@@ -12,14 +12,14 @@ public class PersonnelService {
 
     private final PersonnelDao personnelDao = new PersonnelDao();
 
-    public void create(PersonnelDto personnelDTO) throws DuplicateDataException, SaveRecordException, DuplicateNationalCodeException {
+    public void create(PersonnelDto personnelDTO) throws  SaveRecordException, DuplicateNationalCodeException {
 
         Personnel personnel = DtoMapper.toEntity(personnelDTO);
         personnel.setId(null);
         createPersonnel(personnel);
     }
 
-    public void createPersonnel(Personnel personnel) throws SaveRecordException, DuplicateDataException, DuplicateNationalCodeException {
+    public void createPersonnel(Personnel personnel) throws SaveRecordException, DuplicateNationalCodeException {
         if (canSavePersonnel(personnel)) {
             personnelDao.create(personnel);
         } else {
@@ -34,4 +34,6 @@ public class PersonnelService {
     private boolean isDuplicate(Personnel personnel) {
         return personnelDao.isNationalIdDuplicated(personnel.getNationalCode());
     }
+
+
 }
