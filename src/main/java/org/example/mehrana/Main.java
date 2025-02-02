@@ -1,14 +1,14 @@
 package org.example.mehrana;
 
+import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.dto.PersonnelDto;
-import org.example.mehrana.exception.DuplicateNationalCodeException;
-import org.example.mehrana.exception.SaveRecordException;
+import org.example.mehrana.exception.*;
 import org.example.mehrana.srvice.PersonnelService;
 
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException {
         PersonnelService personnelService = new PersonnelService();
         Scanner scanner = new Scanner(System.in);
 
@@ -21,14 +21,14 @@ public class Main {
             System.out.println("5. Exit");
             System.out.print("Please select an option (1-5): ");
             int choice = scanner.nextInt();
-            scanner.nextLine();  // consume the leftover newline character
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
                     // Add Personnel
                     System.out.println("Enter Personnel Details:");
 
-                    System.out.print("Name: ");
+                    System.out.print("Username: ");
                     String name = scanner.nextLine();
 
                     System.out.print("Password: ");
@@ -36,7 +36,7 @@ public class Main {
 
                     System.out.print("National Code: ");
                     long nationalCode = scanner.nextLong();
-                    scanner.nextLine();  // consume the leftover newline character
+                    scanner.nextLine();
 
                     PersonnelDto personnelDto = new PersonnelDto();
                     personnelDto.setUsername(name);
@@ -47,24 +47,39 @@ public class Main {
                         personnelService.create(personnelDto);
                         System.out.println("Personnel saved successfully!");
                     } catch (DuplicateNationalCodeException e) {
-                        System.out.println("Duplicate national code detected. Please try again.");
+                        throw new DuplicateNationalCodeException("Duplicate national code detected. Please try again.");
                     } catch (SaveRecordException e) {
-                        System.out.println("Error saving record. Please try again.");
+                        throw new SaveRecordException();
                     }
                     break;
 
                 case 2:
                     // Delete Personnel
-                    System.out.print("Enter the National Code of the Personnel to Delete: ");
-                    long deleteNationalCode = scanner.nextLong();
+                    System.out.println("Do you want to delete By:");
+                    System.out.println("1. nationalCode ");
+                    System.out.println("2. ID ");
+                    long choiceDelete = scanner.nextLong();
                     scanner.nextLine();
-
                     try {
-                        personnelService.delete(deleteNationalCode);
-                        System.out.println("Personnel deleted successfully!");
+                        if (choiceDelete == 1) {
+                            System.out.print("Enter the National Code of the Personnel to Delete: ");
+                            long deleteNationalCode = scanner.nextLong();
+                            scanner.nextLine();
+
+                            personnelService.deleteByNationalCode(deleteNationalCode);
+                            System.out.println("Personnel deleted successfully!");
+                        } else if (choiceDelete == 2) {
+                            System.out.print("Enter the ID of the Personnel to Delete: ");
+                            Long deleteId = scanner.nextLong();
+                            scanner.nextLine();
+
+                            personnelService.deleteById(deleteId);
+                            System.out.println("Personnel deleted successfully!");
+                        }
                     } catch (Exception e) {
-                        System.out.println("Error deleting personnel. Please try again.");
+                        throw new DeleteException();
                     }
+
                     break;
 
                 case 3:
@@ -81,7 +96,7 @@ public class Main {
                         System.out.println("Password: " + searchedPersonnel.getPassword());
                         System.out.println("National Code: " + searchedPersonnel.getNationalCode());
                     } else {
-                        System.out.println("Personnel not found with the given National Code.");
+                        throw new NotFoundException("Personnel not found with the given National Code");
                     }
                     break;
 
@@ -91,7 +106,7 @@ public class Main {
 
                     System.out.print("National Code: ");
                     long updateNationalCode = scanner.nextLong();
-                    scanner.nextLine();  // consume newline
+                    scanner.nextLine();
 
                     System.out.print("New Name: ");
                     String newName = scanner.nextLine();
@@ -105,9 +120,9 @@ public class Main {
                     updatePersonnelDto.setPassword(newPassword);
 
                     try {
-                        personnelService.update(updatePersonnelDto);
+                        personnelService.updatePersonnel(updatePersonnelDto);
                     } catch (Exception e) {
-                        System.out.println("Error updating personnel. Please try again.");
+                        throw new UpdateException();
                     }
                     break;
 

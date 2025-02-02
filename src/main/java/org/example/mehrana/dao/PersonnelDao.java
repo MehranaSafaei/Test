@@ -10,7 +10,6 @@ import java.util.Optional;
 public class PersonnelDao implements CrudDao<Personnel> {
 
     private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("PersonnelUnit");
-
     private final EntityManager entityManager;
 
     public PersonnelDao() {
@@ -20,16 +19,13 @@ public class PersonnelDao implements CrudDao<Personnel> {
     @Override
     public void create(Personnel personnel) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
-
         try {
             if (isNationalIdDuplicated(personnel.getNationalCode())) {
-                throw new DuplicateNationalCodeException();
+                throw new DuplicateNationalCodeException("National code is duplicated!");
             }
-
             entityTransaction.begin();
             entityManager.persist(personnel);
             entityTransaction.commit();
-
         } catch (Exception e) {
             if (entityTransaction.isActive()) {
                 entityTransaction.rollback();
@@ -38,22 +34,16 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
-    public Personnel create(Personnel personnel, String nationalCode) throws DuplicateNationalCodeException {
-        return null;
-    }
-
-    public Personnel findById(Long id) {
-        return entityManager.find(Personnel.class, id);
+    public Optional<Personnel> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Personnel.class, id));
     }
 
     public void update(Personnel personnel) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
-
         try {
-            if (isNationalIdDuplicated(personnel.getNationalCode())) {
+            if (isNationalIdDuplicated(personnel.getNationalCode()) && !isSamePersonnel(personnel)) {
                 throw new DuplicateNationalCodeException();
             }
-
             entityTransaction.begin();
             entityManager.merge(personnel);
             entityTransaction.commit();
@@ -65,17 +55,22 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
-    public Personnel delete(Personnel entity) {
-        return null;
+    public boolean isNationalIdDuplicated(long nationalCode) {
+        Long count = entityManager.createNamedQuery(
+                        "CountByNationalCode", Long.class)
+                .setParameter("nationalCode", nationalCode)
+                .getSingleResult();
+        return count > 0;
     }
 
-    public List<Personnel> findAll() {
-        return List.of();
+    // بررسی اینکه کد ملی متعلق به همان پرسنل است یا خیر (در به‌روزرسانی کاربرد دارد)
+    private boolean isSamePersonnel(Personnel personnel) {
+        Optional<Personnel> existingPersonnel = findByNationalCode(personnel.getNationalCode());
+        return existingPersonnel.map(p -> p.getId().equals(personnel.getId())).orElse(false);
     }
 
     public void delete(Long id) {
         EntityTransaction entityTransaction = entityManager.getTransaction();
-
         try {
             Personnel personnel = entityManager.find(Personnel.class, id);
             if (personnel != null) {
@@ -91,13 +86,22 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
-    public boolean isNationalIdDuplicated(long nationalCode) {
-        Long count = entityManager.createNamedQuery("CountByNationalCode", Long.class)
-                .setParameter("nationalCode", nationalCode)
-                .getSingleResult();
-        return count > 0;
+    public void deleteByNationalCode(Long nationalCode) {
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        try {
+            Optional<Personnel> personnel = findByNationalCode(nationalCode);
+            if (personnel.isPresent()) {
+                entityTransaction.begin();
+                entityManager.remove(personnel.get());
+                entityTransaction.commit();
+            }
+        } catch (Exception e) {
+            if (entityTransaction.isActive()) {
+                entityTransaction.rollback();
+            }
+            throw e;
+        }
     }
-
 
     public Optional<Personnel> findByNationalCode(long nationalCode) {
         try {
@@ -110,4 +114,9 @@ public class PersonnelDao implements CrudDao<Personnel> {
             return Optional.empty();
         }
     }
+
+    public List<Personnel> findAll() {
+        return entityManager.createNamedQuery("SelectAll", Personnel.class).getResultList();
+    }
+
 }
