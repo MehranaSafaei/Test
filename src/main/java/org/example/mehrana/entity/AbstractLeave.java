@@ -33,7 +33,7 @@ public class AbstractLeave {
         this.leaveDate = leaveDate;
     }
 
-    @Column(name = "StartDate")
+    @Column(name = "Start_date")
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -41,7 +41,7 @@ public class AbstractLeave {
         this.startDate = startDate;
     }
 
-    @Column(name = "EndDate")
+    @Column(name = "End_date")
     public LocalDate getEndDate() {
         return endDate;
     }

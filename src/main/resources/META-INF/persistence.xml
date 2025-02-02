@@ -1,48 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-             https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
-             version="3.1">
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
 
     <persistence-unit name="PersonnelUnit" transaction-type="RESOURCE_LOCAL">
-        <class>org.example.mehrana.entity.Personnel</class> <!-- Add your entity classes here -->
+        <class>org.example.mehrana.entity.Personnel</class>
+        <class>org.example.mehrana.entity.Leave</class>
 
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>
-            <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="Aa@123456"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/test"/>
+            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
+            <property name="jakarta.persistence.jdbc.password" value="1234"/>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
+        <!--<?xml version="1.0" encoding="UTF-8"?>-->
+        <!--<persistence xmlns="https://jakarta.ee/xml/ns/persistence"-->
+        <!--             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+        <!--             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence-->
+        <!--             https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"-->
+        <!--             version="3.1">-->
 
-        <!--
-        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
-                     version="3.0">
+        <!--    <persistence-unit name="PersonnelUnit" transaction-type="RESOURCE_LOCAL">-->
+        <!--        <class>org.example.mehrana.entity.Personnel</class> &lt;!&ndash; Add your entity classes here &ndash;&gt;-->
 
-            <persistence-unit name="PersonnelUnit" transaction-type="RESOURCE_LOCAL">
-                <class>org.example.mehrana.entity.Personnel</class>
-                <class>org.example.mehrana.entity.Leave</class>
+        <!--        <properties>-->
+        <!--            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>-->
+        <!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>-->
+        <!--            <property name="jakarta.persistence.jdbc.user" value="root"/>-->
+        <!--            <property name="jakarta.persistence.jdbc.password" value="Aa@123456"/>-->
 
-                <properties>
-                    <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-                    <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/test"/>
-                    <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-                    <property name="jakarta.persistence.jdbc.password" value="1234"/>
+        <!--            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>-->
+        <!--            <property name="hibernate.hbm2ddl.auto" value="update"/>-->
+        <!--            <property name="hibernate.show_sql" value="true"/>-->
+        <!--            <property name="hibernate.format_sql" value="true"/>-->
+        <!--        </properties>-->
+        <!--    </persistence-unit>-->
+        <!--</persistence>-->
 
-                    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-                    <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-                    <property name="hibernate.show_sql" value="true"/>
-                    <property name="hibernate.format_sql" value="true"/>
-                </properties>
-            </persistence-unit>
-        </persistence> -->
+

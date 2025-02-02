@@ -17,14 +17,14 @@ public class PersonnelDao implements CrudDao<Personnel> {
     }
 
     @Override
-    public void create(Personnel personnel) throws DuplicateNationalCodeException {
+    public void create(Personnel entity) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
-            if (isNationalIdDuplicated(personnel.getNationalCode())) {
+            if (isNationalIdDuplicated(entity.getNationalCode())) {
                 throw new DuplicateNationalCodeException("National code is duplicated!");
             }
             entityTransaction.begin();
-            entityManager.persist(personnel);
+            entityManager.persist(entity);
             entityTransaction.commit();
         } catch (Exception e) {
             if (entityTransaction.isActive()) {
@@ -34,18 +34,20 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
+    @Override
     public Optional<Personnel> findById(Long id) {
         return Optional.ofNullable(entityManager.find(Personnel.class, id));
     }
 
-    public void update(Personnel personnel) throws DuplicateNationalCodeException {
+    @Override
+    public void update(Personnel entity) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
-            if (isNationalIdDuplicated(personnel.getNationalCode()) && !isSamePersonnel(personnel)) {
+            if (isNationalIdDuplicated(entity.getNationalCode()) && !isSamePersonnel(entity)) {
                 throw new DuplicateNationalCodeException();
             }
             entityTransaction.begin();
-            entityManager.merge(personnel);
+            entityManager.merge(entity);
             entityTransaction.commit();
         } catch (Exception e) {
             if (entityTransaction.isActive()) {
@@ -63,12 +65,13 @@ public class PersonnelDao implements CrudDao<Personnel> {
         return count > 0;
     }
 
-    // بررسی اینکه کد ملی متعلق به همان پرسنل است یا خیر (در به‌روزرسانی کاربرد دارد)
+    //checking that the nationalCode belongs to the same personnel
     private boolean isSamePersonnel(Personnel personnel) {
         Optional<Personnel> existingPersonnel = findByNationalCode(personnel.getNationalCode());
         return existingPersonnel.map(p -> p.getId().equals(personnel.getId())).orElse(false);
     }
 
+    @Override
     public void delete(Long id) {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
@@ -115,6 +118,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
+    @Override
     public List<Personnel> findAll() {
         return entityManager.createNamedQuery("SelectAll", Personnel.class).getResultList();
     }

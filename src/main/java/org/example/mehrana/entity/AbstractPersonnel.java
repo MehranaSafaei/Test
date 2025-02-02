@@ -3,6 +3,7 @@ package org.example.mehrana.entity;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @MappedSuperclass
 public class  AbstractPersonnel {
@@ -10,6 +11,7 @@ public class  AbstractPersonnel {
     private String username;
     private String password;
     private Long nationalCode;
+    private Set<Leave> leaves;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,11 +38,20 @@ public class  AbstractPersonnel {
         this.password = password;
     }
 
+    @Column(name = "NationalCode",nullable = false,updatable = true, unique = true)
     public Long getNationalCode() {
         return nationalCode;
     }
     public void setNationalCode(Long nationalCode) {
         this.nationalCode = nationalCode;
+    }
+
+    @OneToMany(mappedBy = "personnel", cascade = CascadeType.ALL, orphanRemoval = true)
+    public Set<Leave> getLeaves() {
+        return leaves;
+    }
+    public void setLeaves(Set<Leave> leaves) {
+        this.leaves = leaves;
     }
 
     @Override
@@ -50,6 +61,7 @@ public class  AbstractPersonnel {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", nationalCode=" + nationalCode +
+                ", leaves=" + leaves +
                 '}';
     }
 
@@ -58,11 +70,11 @@ public class  AbstractPersonnel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractPersonnel that = (AbstractPersonnel) o;
-        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password ) && Objects.equals(nationalCode, that.nationalCode);
+        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password ) && Objects.equals(nationalCode, that.nationalCode) && Objects.equals(leaves, that.leaves);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, nationalCode);
+        return Objects.hash(id, username, password, nationalCode, leaves);
     }
 }

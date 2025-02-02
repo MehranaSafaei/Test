@@ -1,10 +1,12 @@
 package org.example.mehrana.entity.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class LeaveDto {
 
     private Long id;
+    private LocalDateTime leaveDate;
     private LocalDate startDate;
     private LocalDate endDate;
     private String Description;
@@ -15,6 +17,13 @@ public class LeaveDto {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDateTime getLeaveDate() {
+        return leaveDate;
+    }
+    public void setLeaveDate(LocalDateTime leaveDate) {
+        this.leaveDate = leaveDate;
     }
 
     public LocalDate getStartDate() {

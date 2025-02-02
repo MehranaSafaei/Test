@@ -1,24 +1,31 @@
 package org.example.mehrana;
 
+import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
+import org.example.mehrana.entity.dto.LeaveDto;
 import org.example.mehrana.entity.dto.PersonnelDto;
 import org.example.mehrana.exception.*;
+import org.example.mehrana.srvice.LeaveService;
 import org.example.mehrana.srvice.PersonnelService;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException {
         PersonnelService personnelService = new PersonnelService();
+        LeaveService leaveService = new LeaveService();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("=== Personnel Management System ===");
+            System.out.println("=== Management System ===");
             System.out.println("1. Add Personnel");
             System.out.println("2. Delete Personnel");
             System.out.println("3. Search Personnel");
             System.out.println("4. Update Personnel");
-            System.out.println("5. Exit");
+            System.out.println("5. Add Leave");
+            System.out.println("6. Exit");
             System.out.print("Please select an option (1-5): ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -92,7 +99,7 @@ public class Main {
 
                     if (searchedPersonnel != null) {
                         System.out.println("Personnel Details:");
-                        System.out.println("Name: " + searchedPersonnel.getUsername());
+                        System.out.println("Username: " + searchedPersonnel.getUsername());
                         System.out.println("Password: " + searchedPersonnel.getPassword());
                         System.out.println("National Code: " + searchedPersonnel.getNationalCode());
                     } else {
@@ -108,7 +115,7 @@ public class Main {
                     long updateNationalCode = scanner.nextLong();
                     scanner.nextLine();
 
-                    System.out.print("New Name: ");
+                    System.out.print("New Username: ");
                     String newName = scanner.nextLine();
 
                     System.out.print("New Password: ");
@@ -127,6 +134,43 @@ public class Main {
                     break;
 
                 case 5:
+                    System.out.println("Enter your NationalCode");
+                    long nationalCodePersonnel = scanner.nextLong();
+                    scanner.nextLine();
+
+                    PersonnelDto personnel = personnelService.getByNationalCode(nationalCodePersonnel);
+                    if (personnel != null) {
+                        System.out.println("National Code: " + nationalCodePersonnel);
+                        System.out.println("Enter Leave Details:");
+
+                        System.out.print("Enter Date (YYYY-MM-DD): ");
+                        String date = scanner.nextLine();
+
+                        System.out.print("Enter start date (YYYY-MM-DD): ");
+                        String startDate = scanner.nextLine();
+
+                        System.out.print("Enter end date (YYYY-MM-DD): ");
+                        String endDate = scanner.nextLine();
+
+                        System.out.print("Enter description: ");
+                        String description = scanner.nextLine();
+
+                        LeaveDto leaveDto = new LeaveDto();
+                        try {
+                            leaveDto.setLeaveDate(LocalDateTime.parse(date + "T00:00:00"));
+                            leaveDto.setStartDate(Date.valueOf(startDate).toLocalDate());
+                            leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
+                        } catch (Exception e) {
+                            System.out.println("Invalid date format. Please enter dates in the format YYYY-MM-DD.");
+                            return;
+                        }
+                        leaveDto.setDescription(description);
+                        leaveDto.setPersonnelId(personnel.getNationalCode());
+                        leaveService.createLeave(leaveDto);
+                    }
+                    break;
+
+                case 6:
                     // Exit
                     System.out.println("Program terminated.");
                     scanner.close();
