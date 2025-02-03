@@ -134,7 +134,7 @@ public class Main {
                     break;
 
                 case 5:
-                    System.out.println("Enter your NationalCode");
+                    System.out.print("Enter your NationalCode: ");
                     long nationalCodePersonnel = scanner.nextLong();
                     scanner.nextLine();
 
@@ -143,7 +143,7 @@ public class Main {
                         System.out.println("National Code: " + nationalCodePersonnel);
                         System.out.println("Enter Leave Details:");
 
-                        System.out.print("Enter Date (YYYY-MM-DD): ");
+                        System.out.print("Enter Date: ");
                         String date = scanner.nextLine();
 
                         System.out.print("Enter start date (YYYY-MM-DD): ");
@@ -156,17 +156,14 @@ public class Main {
                         String description = scanner.nextLine();
 
                         LeaveDto leaveDto = new LeaveDto();
-                        try {
-                            leaveDto.setLeaveDate(LocalDateTime.parse(date + "T00:00:00"));
-                            leaveDto.setStartDate(Date.valueOf(startDate).toLocalDate());
-                            leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
-                        } catch (Exception e) {
-                            System.out.println("Invalid date format. Please enter dates in the format YYYY-MM-DD.");
-                            return;
-                        }
+                        leaveDto.setLeaveDate(LocalDateTime.parse(date + "T00:00:00"));
+                        leaveDto.setStartDate(Date.valueOf(startDate).toLocalDate());
+                        leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
                         leaveDto.setDescription(description);
                         leaveDto.setPersonnelId(personnel.getNationalCode());
                         leaveService.createLeave(leaveDto);
+                    }else {
+                        throw new NotFoundException("Personnel not found with the given National Code");
                     }
                     break;
 

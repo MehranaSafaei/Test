@@ -9,9 +9,8 @@ import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
 
 public class LeaveService {
-    private LeaveDao leaveDao;
+    private LeaveDao leaveDao = new LeaveDao();
 
-    @Transactional
     public void create(Leave entity) throws SaveRecordException {
         try {
             if (isValidatePersonnel(entity.getPersonnel())) {
