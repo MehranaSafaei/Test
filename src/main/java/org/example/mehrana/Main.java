@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException {
+    public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException, PersonnelNotFoundException {
         PersonnelService personnelService = new PersonnelService();
         LeaveService leaveService = new LeaveService();
         Scanner scanner = new Scanner(System.in);
@@ -143,24 +143,23 @@ public class Main {
                         System.out.println("National Code: " + nationalCodePersonnel);
                         System.out.println("Enter Leave Details:");
 
-                        System.out.print("Enter Date: ");
-                        String date = scanner.nextLine();
-
                         System.out.print("Enter start date (YYYY-MM-DD): ");
                         String startDate = scanner.nextLine();
+                        scanner.nextLine();
 
                         System.out.print("Enter end date (YYYY-MM-DD): ");
                         String endDate = scanner.nextLine();
+                        scanner.nextLine();
 
                         System.out.print("Enter description: ");
                         String description = scanner.nextLine();
 
                         LeaveDto leaveDto = new LeaveDto();
-                        leaveDto.setLeaveDate(LocalDateTime.parse(date + "T00:00:00"));
+                        leaveDto.setLeaveDate(LocalDateTime.now());
                         leaveDto.setStartDate(Date.valueOf(startDate).toLocalDate());
                         leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
                         leaveDto.setDescription(description);
-                        leaveDto.setPersonnelId(personnel.getNationalCode());
+                        leaveDto.setPersonnelId(personnel.getId());
                         leaveService.createLeave(leaveDto);
                     }else {
                         throw new NotFoundException("Personnel not found with the given National Code");

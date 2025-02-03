@@ -39,12 +39,10 @@ public class DtoMapper {
     public static Leave toEntity(LeaveDto dto) {
         Leave leave = new Leave();
         leave.setId(dto.getId());
+        leave.setLeaveDate(dto.getLeaveDate());
         leave.setStartDate(dto.getStartDate());
         leave.setEndDate(dto.getEndDate());
         leave.setDescription(dto.getDescription());
-        // لازم است پرسنل را جستجو کرده و تنظیم کنیم
-        // فرض کنید personnelService موجود است
-        // leave.setPersonnel(personnelService.findById(dto.getPersonnelId()));
         return leave;
     }
 }

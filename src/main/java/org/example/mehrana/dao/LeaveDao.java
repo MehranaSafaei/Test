@@ -36,25 +36,27 @@ public class LeaveDao implements CrudDao<Leave> {
         }
     }
 
-    @Override
     public Optional<Leave> findById(Long id) {
         return Optional.empty();
     }
 
-    @Override
     public void update(Leave entity) throws DuplicateNationalCodeException {
 
     }
 
-    @Override
     public void delete(Long id) {
 
     }
 
-    @Override
     public List<Leave> findAll() {
         return List.of();
     }
 
 
+    public boolean existsByPersonnelId(Long personnelId) {
+        Long count = entityManager.createNamedQuery("CountExistsByPersonnelId", Long.class)
+                .setParameter("personnelId", personnelId)
+                .getSingleResult();
+        return count > 0;
+    }
 }

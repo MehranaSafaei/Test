@@ -25,7 +25,7 @@ public class AbstractLeave {
         this.id = id;
     }
 
-    @Column(name = "Date", nullable = false)
+    @Column(name = "leave_date", nullable = false)
     public LocalDateTime getLeaveDate() {
         return leaveDate;
     }
