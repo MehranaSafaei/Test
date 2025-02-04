@@ -33,14 +33,14 @@ public class PersonnelDao implements CrudDao<Personnel> {
             throw e;
         }
     }
-
+    @Override
     public Personnel findById(Long id) {
 //        Long ID = entityManager.createNamedQuery("selectById",Long.class)
 //                .setParameter("id" , id)
 //                .getSingleResult();
         return entityManager.find(Personnel.class, id);
     }
-
+    @Override
     public void update(Personnel entity) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
@@ -72,6 +72,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
         return existingPersonnel.map(p -> p.getId().equals(personnel.getId())).orElse(false);
     }
 
+    @Override
     public void delete(Long id) {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
@@ -118,6 +119,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
+    @Override
     public List<Personnel> findAll() {
         return entityManager.createNamedQuery("SelectAll", Personnel.class).getResultList();
     }

@@ -13,6 +13,7 @@ import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class LeaveService {
@@ -36,7 +37,7 @@ public class LeaveService {
         }
     }
 
-    public void createLeave(LeaveDto leaveDto,PersonnelDto personnelDto) throws SaveRecordException {
+    public void createLeave(LeaveDto leaveDto, PersonnelDto personnelDto) throws SaveRecordException {
         Personnel personnel = personnelService.getByPersonnelId(personnelDto.getId());
         Leave leave = DtoMapper.toEntity(leaveDto, personnel);
         create(leave);
@@ -52,5 +53,36 @@ public class LeaveService {
         return existingPersonnel != null;
     }
 
+    public void updateLeave(long leaveId, LeaveDto updateLeaveDto, long personnelId) throws SaveRecordException {
+        Leave leave = leaveDao.findById(leaveId);
+        Personnel personnel = personnelService.getByPersonnelId(personnelId);
+        //checking leave ownership
+        if (!leave.getPersonnel().getId().equals(personnel.getId())) {
+            throw new SaveRecordException();
+        }
+        //TODO:I should add method that when manager approve, personnel can't change it
+        //checking that date doesn't be before day
+        LocalDate localDate = LocalDate.now();
+        if (updateLeaveDto.getStartDate().isBefore(localDate) || updateLeaveDto.getEndDate().isAfter(localDate)) {
+            throw new SaveRecordException();
+        }
+        //checking the conflict of new dates with other personnel leaves
+        Optional<Leave> overLappingLeave = leaveDao.findByPersonnelIdAndDateRange(personnelId, updateLeaveDto.getStartDate(), updateLeaveDto.getEndDate());
+        if (overLappingLeave.isPresent() && !overLappingLeave.get().getId().equals(leave.getId())) {
+            throw new SaveRecordException();
+        }
+        leave.setStartDate(updateLeaveDto.getStartDate());
+        leave.setEndDate(updateLeaveDto.getEndDate());
+        leaveDao.update(leave);
+    }
+
+    public void delete(long leaveId) throws SaveRecordException {
+        Leave leaveToDelete = leaveDao.findById(leaveId);
+        if (leaveToDelete != null) {
+            leaveDao.delete(leaveId);
+        }
+        throw new SaveRecordException();
+    }
+    //TODO: I should add (findById, Role(in Personnel), LeaveToDeleteByNationalCode, findByName, findByNationalCode(that show me List)
 
 }

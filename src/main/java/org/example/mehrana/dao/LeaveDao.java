@@ -6,11 +6,10 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
-import org.example.mehrana.entity.dto.LeaveDto;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
 import org.example.mehrana.exception.SaveRecordException;
-import org.example.mehrana.mapper.DtoMapper;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,29 +26,55 @@ public class LeaveDao implements CrudDao<Leave> {
     public void create(Leave entity) throws SaveRecordException {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
-                transaction.begin();
-                entityManager.persist(entity);
-                transaction.commit();
+            transaction.begin();
+            entityManager.persist(entity);
+            transaction.commit();
 
         } catch (Exception e) {
             throw new SaveRecordException();
         }
     }
 
-    public Optional<Leave> findById(Long id) {
-        return Optional.empty();
+    @Override
+    public Leave findById(Long id) {
+        return entityManager.find(Leave.class, id);
     }
 
-    public void update(Leave entity) throws DuplicateNationalCodeException {
-
+    @Override
+    public void update(Leave entity) {
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        try {
+            entityTransaction.begin();
+            entityManager.merge(entity);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
+        }
     }
 
+
+    @Override
     public void delete(Long id) {
-
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        try {
+            Leave leave = entityManager.find(Leave.class, id);
+            if (leave != null) {
+                entityTransaction.begin();
+                entityManager.remove(leave);
+                entityTransaction.commit();
+            }
+        } catch (Exception e) {
+            if (entityTransaction.isActive()) {
+                entityTransaction.rollback();
+            }
+            throw e;
+        }
     }
 
+    @Override
     public List<Leave> findAll() {
-        return List.of();
+        return entityManager.createNamedQuery("SelectAll", Leave.class).getResultList();
     }
 
 
@@ -59,4 +84,19 @@ public class LeaveDao implements CrudDao<Leave> {
                 .getSingleResult();
         return count > 0;
     }
+
+    public Optional<Leave> findByPersonnelIdAndDateRange(long personnelId, LocalDate startDate, LocalDate endDate) {
+        try {
+            Leave leave = entityManager.createNamedQuery("selectByPersonnelIdAndDateRange", Leave.class)
+                    .setParameter("personnelId", personnelId)
+                    .setParameter("startDate", startDate)
+                    .setParameter("endDate", endDate)
+                    .getSingleResult();
+
+            return Optional.ofNullable(leave);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
 }
