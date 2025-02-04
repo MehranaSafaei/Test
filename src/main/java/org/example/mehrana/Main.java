@@ -10,6 +10,7 @@ import org.example.mehrana.srvice.PersonnelService;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -25,8 +26,9 @@ public class Main {
             System.out.println("3. Search Personnel");
             System.out.println("4. Update Personnel");
             System.out.println("5. Add Leave");
-            System.out.println("6. Exit");
-            System.out.print("Please select an option (1-5): ");
+            System.out.println("6. All personnels");
+            System.out.println("7. Exit");
+            System.out.print("Please select an option (1-7): ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -145,11 +147,9 @@ public class Main {
 
                         System.out.print("Enter start date (YYYY-MM-DD): ");
                         String startDate = scanner.nextLine();
-                        scanner.nextLine();
 
                         System.out.print("Enter end date (YYYY-MM-DD): ");
                         String endDate = scanner.nextLine();
-                        scanner.nextLine();
 
                         System.out.print("Enter description: ");
                         String description = scanner.nextLine();
@@ -160,14 +160,18 @@ public class Main {
                         leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
                         leaveDto.setDescription(description);
                         leaveDto.setPersonnelId(personnel.getId());
-                        leaveService.createLeave(leaveDto);
-                    }else {
+                        leaveService.createLeave(leaveDto, personnel);
+                    } else {
                         throw new NotFoundException("Personnel not found with the given National Code");
                     }
                     break;
-
-
                 case 6:
+                    List<Personnel> personnelList = personnelService.getAll();
+                    for (Personnel personnel1: personnelList){
+                        System.out.println(personnel1);
+                    }
+                    break;
+                case 7:
                     // Exit
                     System.out.println("Program terminated.");
                     scanner.close();

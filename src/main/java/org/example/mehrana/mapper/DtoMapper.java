@@ -18,6 +18,7 @@ public class DtoMapper {
     //Convert entity to dto
     public static PersonnelDto toDTO(Personnel entity) {
         PersonnelDto personnelDto = new PersonnelDto();
+        personnelDto.setId(entity.getId());
         personnelDto.setUsername(entity.getUsername());
         personnelDto.setPassword(entity.getPassword());
         personnelDto.setNationalCode(entity.getNationalCode());
@@ -36,14 +37,17 @@ public class DtoMapper {
     }
 
     //Convert dto to entity
-    public static Leave toEntity(LeaveDto dto) {
+    public static Leave toEntity(LeaveDto dto, Personnel personnel) {
         Leave leave = new Leave();
         leave.setId(dto.getId());
         leave.setLeaveDate(dto.getLeaveDate());
         leave.setStartDate(dto.getStartDate());
         leave.setEndDate(dto.getEndDate());
         leave.setDescription(dto.getDescription());
+        leave.setPersonnel(personnel);
+
         return leave;
     }
+
 }
 

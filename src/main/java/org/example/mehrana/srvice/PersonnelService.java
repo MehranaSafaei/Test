@@ -8,7 +8,9 @@ import org.example.mehrana.exception.NotFoundException;
 import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PersonnelService {
 
@@ -55,9 +57,9 @@ public class PersonnelService {
     }
 
     public void deleteById(Long deleteId) throws NotFoundException {
-        Optional<Personnel> personnelToDelete = personnelDao.findById(deleteId);
+        Personnel personnelToDelete = personnelDao.findById(deleteId);
 
-        if (personnelToDelete.isPresent()) {
+        if (personnelToDelete != null) {
             personnelDao.delete(deleteId);
         } else {
             throw new NotFoundException("Personnel with ID " + deleteId + " not found.");
@@ -77,5 +79,17 @@ public class PersonnelService {
         }
     }
 
+    public Personnel getByPersonnelId(Long id) {
+        System.out.println("Looking up Personnel by ID: " + id);
+        Personnel personnel = personnelDao.findById(id);
+        if (personnel == null) {
+            System.out.println("Personnel not found for ID: " + id);
+        }
+        return personnel;
+    }
+
+    public List<Personnel> getAll() {
+        return personnelDao.findAll();
+    }
 
 }

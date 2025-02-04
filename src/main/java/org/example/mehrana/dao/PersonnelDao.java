@@ -34,8 +34,11 @@ public class PersonnelDao implements CrudDao<Personnel> {
         }
     }
 
-    public Optional<Personnel> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Personnel.class, id));
+    public Personnel findById(Long id) {
+//        Long ID = entityManager.createNamedQuery("selectById",Long.class)
+//                .setParameter("id" , id)
+//                .getSingleResult();
+        return entityManager.find(Personnel.class, id);
     }
 
     public void update(Personnel entity) throws DuplicateNationalCodeException {
