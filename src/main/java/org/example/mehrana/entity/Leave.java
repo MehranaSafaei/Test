@@ -14,4 +14,5 @@ import jakarta.persistence.Table;
         ":endDate BETWEEN l.startDate AND l.endDate")
 })
 public class Leave extends AbstractLeave{
+
 }

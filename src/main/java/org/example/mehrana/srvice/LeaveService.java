@@ -6,6 +6,7 @@ import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.dto.LeaveDto;
 import org.example.mehrana.entity.dto.PersonnelDto;
+import org.example.mehrana.entity.enums.Role;
 import org.example.mehrana.exception.NotFoundException;
 import org.example.mehrana.exception.PersonnelAlreadyHasLeaveException;
 import org.example.mehrana.exception.PersonnelNotFoundException;
@@ -14,6 +15,7 @@ import org.example.mehrana.mapper.DtoMapper;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public class LeaveService {
@@ -84,5 +86,47 @@ public class LeaveService {
         throw new SaveRecordException();
     }
     //TODO: I should add (findById, Role(in Personnel), LeaveToDeleteByNationalCode, findByName, findByNationalCode(that show me List)
+    public Leave findById(long leaveId) throws NotFoundException {
+        Leave leave = leaveDao.findById(leaveId);
+        if (leave == null) {
+            throw new NotFoundException("Leave not found with ID: " + leaveId);
+        }
+        return leave;
+    }
+    public List<Personnel> findByRole(String role) {
+        return personnelService.findByRole(role);
+    }
+
+
+    public void deleteLeaveByNationalCode(long nationalCode) throws SaveRecordException, NotFoundException {
+        PersonnelDto personnel = personnelService.getByNationalCode(nationalCode);
+        if (personnel != null) {
+            leaveDao.deleteByPersonnelId(personnel.getId());
+        } else {
+            //"Personnel not found with National Code: " + nationalCode
+            throw new SaveRecordException();
+        }
+    }
+
+    public void approveLeave(Long leaveId, Long approverId) throws SaveRecordException {
+        Personnel approver = personnelService.getByPersonnelId(approverId);
+        Leave leave = leaveDao.findById(leaveId);
+
+        if (personnelService.hasRole(approver, Role.ADMIN) || personnelService.hasRole(approver, Role.MANAGER)) {
+            leave.setApproved(true);
+            leaveDao.update(leave);
+            System.out.println("Leave approved successfully.");
+        } else {
+            throw new SaveRecordException("You do not have permission to approve this leave.");
+        }
+    }
+
+    public List<PersonnelDto> findByName(String name) {
+        return personnelService.findByName(name);
+    }
+
+    public List<PersonnelDto> findByNationalCode(long nationalCode) {
+        return personnelService.findListByNationalCode(nationalCode);
+    }
 
 }

@@ -11,7 +11,8 @@ import jakarta.persistence.Table;
         @NamedQuery(name = "CountByNationalCode", query = "SELECT COUNT(p) FROM Personnel p WHERE p.nationalCode = :nationalCode"),
         @NamedQuery(name = "SelectByNationalCode", query = "SELECT p FROM Personnel p WHERE p.nationalCode = :nationalCode"),
         @NamedQuery(name = "SelectAll", query = "SELECT p FROM Personnel p"),
-        @NamedQuery(name = "selectById",query = "SELECT p FROM Personnel p WHERE p.id = :id")
+        @NamedQuery(name = "selectById",query = "SELECT p FROM Personnel p WHERE p.id = :id"),
+        @NamedQuery(name = "selectByName", query = "SELECT p FROM Personnel p WHERE p.username = :username")
 })
 public class Personnel extends AbstractPersonnel{
 

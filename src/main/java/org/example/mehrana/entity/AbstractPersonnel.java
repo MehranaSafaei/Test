@@ -1,6 +1,7 @@
 package org.example.mehrana.entity;
 
 import jakarta.persistence.*;
+import org.example.mehrana.entity.enums.Role;
 
 import java.util.Objects;
 import java.util.Set;
@@ -12,6 +13,7 @@ public class  AbstractPersonnel {
     private String password;
     private Long nationalCode;
     private Set<Leave> leaves;
+    private Role role;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +56,16 @@ public class  AbstractPersonnel {
         this.leaves = leaves;
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    public Role getRole() {
+        return role;
+    }
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+
     @Override
     public String toString() {
         return "AbstractPersonnel{" +
@@ -62,6 +74,7 @@ public class  AbstractPersonnel {
                 ", password='" + password + '\'' +
                 ", nationalCode=" + nationalCode +
                 ", leaves=" + leaves +
+                ", role=" + role +
                 '}';
     }
 
@@ -70,11 +83,17 @@ public class  AbstractPersonnel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractPersonnel that = (AbstractPersonnel) o;
-        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password ) && Objects.equals(nationalCode, that.nationalCode) && Objects.equals(leaves, that.leaves);
+        return Objects.equals(id, that.id)
+                && Objects.equals(username, that.username)
+                && Objects.equals(password, that.password )
+                && Objects.equals(nationalCode, that.nationalCode)
+                && Objects.equals(leaves, that.leaves)
+                && role == that.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, nationalCode, leaves);
+        return Objects.hash(id,
+                username, password, nationalCode, leaves, role);
     }
 }

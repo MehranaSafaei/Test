@@ -16,6 +16,7 @@ public class AbstractLeave {
     private LocalDate endDate;
     private String description;
     private Personnel personnel;
+    private boolean approved;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,6 +67,8 @@ public class AbstractLeave {
     public void setPersonnel(Personnel personnel) {
         this.personnel = personnel;
     }
+    public boolean isApproved() { return approved; }
+    public void setApproved(boolean approved) { this.approved = approved; }
 
     @Override
     public String toString() {
@@ -76,6 +79,7 @@ public class AbstractLeave {
                 ", endDate=" + endDate +
                 ", description='" + description + '\'' +
                 ", personnel=" + personnel +
+                ", approved=" + approved +
                 '}';
     }
 

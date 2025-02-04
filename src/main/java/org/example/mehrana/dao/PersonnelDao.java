@@ -2,6 +2,7 @@ package org.example.mehrana.dao;
 
 import jakarta.persistence.*;
 import org.example.mehrana.entity.Personnel;
+import org.example.mehrana.entity.enums.Role;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
             throw e;
         }
     }
+
     @Override
     public Personnel findById(Long id) {
 //        Long ID = entityManager.createNamedQuery("selectById",Long.class)
@@ -40,6 +42,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
 //                .getSingleResult();
         return entityManager.find(Personnel.class, id);
     }
+
     @Override
     public void update(Personnel entity) throws DuplicateNationalCodeException {
         EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -124,4 +127,16 @@ public class PersonnelDao implements CrudDao<Personnel> {
         return entityManager.createNamedQuery("SelectAll", Personnel.class).getResultList();
     }
 
+    public List<Personnel> findByRole(Role role) {
+        return entityManager.createQuery("SELECT p FROM Personnel p WHERE p.role = :role", Personnel.class)
+                .setParameter("role", role)
+                .getResultList();
+    }
+
+    public List<Personnel> findByName(String username) {
+        return entityManager.createNamedQuery(
+                        "selectByName", Personnel.class)
+                .setParameter("username", username)
+                .getResultList();
+    }
 }

@@ -99,4 +99,7 @@ public class LeaveDao implements CrudDao<Leave> {
         }
     }
 
+    public void deleteByPersonnelId(Long id) {
+
+    }
 }
