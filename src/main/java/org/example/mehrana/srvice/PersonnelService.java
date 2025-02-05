@@ -93,6 +93,7 @@ public class PersonnelService {
     public boolean hasRole(Personnel personnel, Role role) {
         return personnel.getRole() == role;
     }
+
     public List<Personnel> getAll() {
         return personnelDao.findAll();
     }

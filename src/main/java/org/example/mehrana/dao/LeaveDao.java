@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class LeaveDao implements CrudDao<Leave> {
 
-    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("PersonnelUnit");
+    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Test");
     private final EntityManager entityManager;
 
     public LeaveDao() {
@@ -74,12 +74,11 @@ public class LeaveDao implements CrudDao<Leave> {
 
     @Override
     public List<Leave> findAll() {
-        return entityManager.createNamedQuery("SelectAll", Leave.class).getResultList();
+        return entityManager.createNamedQuery("selectAll", Leave.class).getResultList();
     }
 
-
     public boolean existsByPersonnelId(Long personnelId) {
-        Long count = entityManager.createNamedQuery("CountExistsByPersonnelId", Long.class)
+        Long count = entityManager.createNamedQuery("countExistsByPersonnelId", Long.class)
                 .setParameter("personnelId", personnelId)
                 .getSingleResult();
         return count > 0;
@@ -100,6 +99,14 @@ public class LeaveDao implements CrudDao<Leave> {
     }
 
     public void deleteByPersonnelId(Long id) {
-
     }
+
+
+
+    public List<Leave> findLeaveByPersonnelId(Long personnelId) {
+        return entityManager.createNamedQuery("selectByPersonnelId", Leave.class)
+                .setParameter("personnel_id", personnelId)
+                .getResultList(); // I made a mistake because getSingleResult I put
+    }
+
 }

@@ -14,7 +14,9 @@ import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
 
 import javax.swing.text.html.Option;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +42,8 @@ public class LeaveService {
     }
 
     public void createLeave(LeaveDto leaveDto, PersonnelDto personnelDto) throws SaveRecordException {
-        Personnel personnel = personnelService.getByPersonnelId(personnelDto.getId());
+        Personnel personnel = personnelService.getByPersonnelId(personnelDto.getId());  //I made mistake because I don't set ID in DtoMapper
+
         Leave leave = DtoMapper.toEntity(leaveDto, personnel);
         create(leave);
     }
@@ -85,6 +88,7 @@ public class LeaveService {
         }
         throw new SaveRecordException();
     }
+
     //TODO: I should add (findById, Role(in Personnel), LeaveToDeleteByNationalCode, findByName, findByNationalCode(that show me List)
     public Leave findById(long leaveId) throws NotFoundException {
         Leave leave = leaveDao.findById(leaveId);
@@ -93,6 +97,7 @@ public class LeaveService {
         }
         return leave;
     }
+
     public List<Personnel> findByRole(String role) {
         return personnelService.findByRole(role);
     }
@@ -103,8 +108,7 @@ public class LeaveService {
         if (personnel != null) {
             leaveDao.deleteByPersonnelId(personnel.getId());
         } else {
-            //"Personnel not found with National Code: " + nationalCode
-            throw new SaveRecordException();
+            throw new SaveRecordException("Personnel not found with National Code: "+ nationalCode);
         }
     }
 
@@ -121,12 +125,53 @@ public class LeaveService {
         }
     }
 
+    public void rejectLeave(Long leaveId, Long approverId, String rejectionReason) throws SaveRecordException {
+        try {
+            Personnel approver = personnelService.getByPersonnelId(approverId);
+            Leave leave = leaveDao.findById(leaveId);
+            if (leave == null) {
+                throw new NotFoundException("Leave not found with ID: " + leaveId);
+            }
+            if (approver == null) {
+                throw new PersonnelNotFoundException("Approver not found with ID: " + approverId);
+            }
+            if (personnelService.hasRole(approver, Role.ADMIN) || personnelService.hasRole(approver, Role.MANAGER)) {
+                if (leave.isRejected()) {
+                    System.out.println("Leave has already been rejected.");
+                    return;
+                }
+                if (leave.isApproved()) {
+                    System.out.println("Leave has already been approved and cannot be rejected.");
+                    return;
+                }
+
+                leave.setRejected(true);
+                leave.setRejectReason(rejectionReason); //reason for rejection
+                leaveDao.update(leave);
+                System.out.println("Leave rejected successfully.");
+            } else {
+                throw new SaveRecordException("You do not have permission to reject this leave.");
+            }
+        } catch (Exception e) {
+            throw new SaveRecordException("Error occurred while rejecting leave: " + e.getMessage());
+        }
+    }
+
+
     public List<PersonnelDto> findByName(String name) {
         return personnelService.findByName(name);
     }
 
     public List<PersonnelDto> findByNationalCode(long nationalCode) {
         return personnelService.findListByNationalCode(nationalCode);
+    }
+    public List<Leave> findLeaveByPersonnelId(Long personnelId) {
+        List<Leave> leaves = leaveDao.findLeaveByPersonnelId(personnelId);
+        return leaves != null ? leaves : new ArrayList<>();
+    }
+
+    public List<Leave> getAll() {
+        return leaveDao.findAll();
     }
 
 }

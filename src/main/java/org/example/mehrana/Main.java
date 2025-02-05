@@ -9,26 +9,35 @@ import org.example.mehrana.srvice.LeaveService;
 import org.example.mehrana.srvice.PersonnelService;
 
 import java.sql.Date;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException, PersonnelNotFoundException {
+    public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException, PersonnelNotFoundException, SQLException {
+
         PersonnelService personnelService = new PersonnelService();
         LeaveService leaveService = new LeaveService();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("=== Management System ===");
-            System.out.println("1. Add Personnel");
-            System.out.println("2. Delete Personnel");
-            System.out.println("3. Search Personnel");
-            System.out.println("4. Update Personnel");
-            System.out.println("5. Add Leave");
-            System.out.println("6. All personnels");
-            System.out.println("7. Exit");
-            System.out.print("Please select an option (1-7): ");
+            System.out.println("1. Add Personnel"); //*
+            System.out.println("2. Delete Personnel"); //*
+            System.out.println("3. Search Personnel"); //*
+            System.out.println("4. Update Personnel"); //*
+            System.out.println("5. Add Leave"); //*
+            System.out.println("6. All personnel's"); //*
+            System.out.println("7. approve/reject Leave");
+            System.out.println("8. view ListLeave By username"); //*
+            System.out.println("9. Update Leave");
+            System.out.println("10. Delete Leave ");
+            System.out.println("0. Exit"); //*
+            System.out.print("Please select an option (1-10): ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -51,7 +60,6 @@ public class Main {
                     personnelDto.setUsername(name);
                     personnelDto.setPassword(password);
                     personnelDto.setNationalCode(nationalCode);
-
                     try {
                         personnelService.create(personnelDto);
                         System.out.println("Personnel saved successfully!");
@@ -167,15 +175,105 @@ public class Main {
                     break;
                 case 6:
                     List<Personnel> personnelList = personnelService.getAll();
-                    for (Personnel personnel1: personnelList){
+                    for (Personnel personnel1 : personnelList) {
                         System.out.println(personnel1);
                     }
                     break;
                 case 7:
+                    System.out.println("Are you sure you want to approve Leave?");
+                    System.out.println(" y/n");
+                    if (scanner.nextLine().equalsIgnoreCase("y")) {
+                        System.out.println("Enter LeaveId to approve");
+                        Long leaveId = scanner.nextLong();
+                        System.out.println("Enter approve personnelId to approve");
+                        Long approvePersonnelId = scanner.nextLong();
+                        leaveService.approveLeave(approvePersonnelId, leaveId);
+                    } else if (scanner.nextLine().equalsIgnoreCase("n")) {
+                        System.out.println("Enter LeaveId to approve");
+                        Long leaveId = scanner.nextLong();
+                        System.out.println("Enter approve personnelId to approve");
+                        Long approvePersonnelId = scanner.nextLong();
+                        System.out.println("Type reason for rejection");
+                        String reason = scanner.nextLine();
+                        leaveService.rejectLeave(leaveId, approvePersonnelId, reason);
+                    }
+                    break;
+                case 8:
+
+                    List<Leave> leaveList;
+                    System.out.print("Enter your username: ");
+                    String username = scanner.nextLine();
+
+                    List<PersonnelDto> personnels = personnelService.findByName(username);
+                    if (personnels == null || personnels.isEmpty()) {
+                        throw new NotFoundException("Personnel not found with the given Username");
+                    }
+                    Long personnelId = personnels.get(0).getId();
+                    leaveList = leaveService.findLeaveByPersonnelId(personnelId);
+
+                    if (leaveList == null || leaveList.isEmpty()) {
+                        System.out.println("No leaves found for this personnel.");
+                    } else {
+                        for (Leave leave : leaveList) {
+                            System.out.println(leave);
+                        }
+                    }
+
+                    break;
+                case 9:
+                    System.out.println("Enter Leave Details to Update:");
+
+                    System.out.print("Leave ID: ");
+                    long leaveId = scanner.nextLong();
+
+                    System.out.print("Personnel ID: ");
+                    long personnelID = scanner.nextLong();
+                    scanner.nextLine();
+
+                    System.out.println("New Start Date (YYYY-MM-DD): ");
+                    String newStartDateInput = scanner.nextLine();
+
+                    System.out.println("New End Date (YYYY-MM-DD): ");
+                    String newEndDateInput = scanner.nextLine();
+
+                    try {
+                        // Validate date input
+                        LocalDate newStartDate = LocalDate.parse(newStartDateInput);
+                        LocalDate newEndDate = LocalDate.parse(newEndDateInput);
+
+                        LeaveDto updateLeaveDto = new LeaveDto();
+                        updateLeaveDto.setStartDate(newStartDate);
+                        updateLeaveDto.setEndDate(newEndDate);
+
+                        leaveService.updateLeave(leaveId, updateLeaveDto, personnelID);
+                        System.out.println("Leave updated successfully.");
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Invalid date format. Please use YYYY-MM-DD.");
+                    } catch (SaveRecordException e) {
+                        System.err.println("Error updating leave: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.err.println("Unexpected error occurred: " + e.getMessage());
+                    }
+                    break;
+                case 10:
+                    //TODO: I should write code that if manager/admin doesn't approve , they reject request
+
+                    System.out.println("Are you sure you want to reject Leave?");
+                    System.out.println(" y/n");
+                    if (scanner.nextLine().equalsIgnoreCase("y")) {
+                        System.out.println("Enter LeaveId to reject");
+                        Long personnelNationalCode = scanner.nextLong();
+                        if (personnelService.findListByNationalCode(personnelNationalCode) != null) {
+                            leaveService.rejectLeave(leaveId,approveId,rejectionReason);
+                        }
+                    }
+
+                case 0:
                     // Exit
-                    System.out.println("Program terminated.");
+                    System.out.println("Exiting program.");
                     scanner.close();
-                    return;
+                    System.exit(0);
+                    break;
 
                 default:
                     System.out.println("Invalid option. Please try again.");

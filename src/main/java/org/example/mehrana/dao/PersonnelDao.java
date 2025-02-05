@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public class PersonnelDao implements CrudDao<Personnel> {
 
-    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("PersonnelUnit");
     private final EntityManager entityManager;
 
     public PersonnelDao() {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Test");
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
@@ -63,7 +63,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
 
     public boolean isNationalIdDuplicated(long nationalCode) {
         Long count = entityManager.createNamedQuery(
-                        "CountByNationalCode", Long.class)
+                        "countByNationalCode", Long.class)
                 .setParameter("nationalCode", nationalCode)
                 .getSingleResult();
         return count > 0;
@@ -113,7 +113,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
     public Optional<Personnel> findByNationalCode(long nationalCode) {
         try {
             Personnel personnel = entityManager.createNamedQuery(
-                            "SelectByNationalCode", Personnel.class)
+                            "selectByNationalCode", Personnel.class)
                     .setParameter("nationalCode", nationalCode)
                     .getSingleResult();
             return Optional.ofNullable(personnel);
@@ -124,7 +124,7 @@ public class PersonnelDao implements CrudDao<Personnel> {
 
     @Override
     public List<Personnel> findAll() {
-        return entityManager.createNamedQuery("SelectAll", Personnel.class).getResultList();
+        return entityManager.createNamedQuery("selectAllPersonnel", Personnel.class).getResultList();
     }
 
     public List<Personnel> findByRole(Role role) {

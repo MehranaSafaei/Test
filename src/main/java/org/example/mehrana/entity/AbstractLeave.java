@@ -1,8 +1,10 @@
 package org.example.mehrana.entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 
+import javax.lang.model.element.Name;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,7 +18,10 @@ public class AbstractLeave {
     private LocalDate endDate;
     private String description;
     private Personnel personnel;
-    private boolean approved;
+    private boolean isApproved;
+    private boolean isRejected;
+    private String rejectReason;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,8 +72,30 @@ public class AbstractLeave {
     public void setPersonnel(Personnel personnel) {
         this.personnel = personnel;
     }
-    public boolean isApproved() { return approved; }
-    public void setApproved(boolean approved) { this.approved = approved; }
+
+    @Column(name = "isApproved")
+    public boolean isApproved() {
+        return isApproved;
+    }
+    public void setApproved(boolean approved) {
+        isApproved = approved;
+    }
+
+    @Column(name = "isReject")
+    public boolean isRejected() {
+        return isRejected;
+    }
+    public void setRejected(boolean rejected) {
+        isRejected = rejected;
+    }
+
+    @Column(name = "Reject_reason")
+    public String getRejectReason() {
+        return rejectReason;
+    }
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
 
     @Override
     public String toString() {
@@ -79,7 +106,9 @@ public class AbstractLeave {
                 ", endDate=" + endDate +
                 ", description='" + description + '\'' +
                 ", personnel=" + personnel +
-                ", approved=" + approved +
+                ", approved=" + isApproved +
+                ", rejected=" + isRejected +
+                ", rejectReason='" + rejectReason + '\'' +
                 '}';
     }
 

@@ -57,7 +57,7 @@ public class  AbstractPersonnel {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     public Role getRole() {
         return role;
     }
