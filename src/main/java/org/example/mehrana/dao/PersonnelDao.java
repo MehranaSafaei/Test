@@ -1,7 +1,6 @@
 package org.example.mehrana.dao;
 
 import jakarta.persistence.*;
-import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.enums.Role;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
@@ -135,9 +134,9 @@ public class PersonnelDao implements CrudDao<Personnel> {
                 .getResultList();
     }
 
-    public List<Personnel> findByName(String username) {
+    public List<Personnel> findByUsername(String username) {
         return entityManager.createNamedQuery(
-                        "selectByName", Personnel.class)
+                        "selectByUsername", Personnel.class)
                 .setParameter("username", username)
                 .getResultList();
     }

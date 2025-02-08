@@ -1,6 +1,5 @@
 package org.example.mehrana.srvice;
 
-import jakarta.persistence.TypedQuery;
 import org.example.mehrana.dao.PersonnelDao;
 import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.dto.PersonnelDto;
@@ -103,8 +102,8 @@ public class PersonnelService {
         return personnelDao.findByRole(role);
     }
 
-    public List<PersonnelDto> findByName(String name) {
-        List<Personnel> personnelList = personnelDao.findByName(name);
+    public List<PersonnelDto> findByUsername(String Username) {
+        List<Personnel> personnelList = personnelDao.findByUsername(Username);
         return personnelList.stream()
                 .map(DtoMapper::toDTO)
                 .collect(Collectors.toList());
