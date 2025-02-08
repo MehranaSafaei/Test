@@ -73,7 +73,7 @@ public class AbstractLeave {
         this.personnel = personnel;
     }
 
-    @Column(name = "isApproved")
+    @Column(name = "is_approved")
     public boolean isApproved() {
         return isApproved;
     }
@@ -81,7 +81,7 @@ public class AbstractLeave {
         isApproved = approved;
     }
 
-    @Column(name = "isReject")
+    @Column(name = "is_rejected")
     public boolean isRejected() {
         return isRejected;
     }

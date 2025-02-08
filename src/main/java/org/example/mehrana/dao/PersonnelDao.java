@@ -1,6 +1,7 @@
 package org.example.mehrana.dao;
 
 import jakarta.persistence.*;
+import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.entity.enums.Role;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
@@ -10,10 +11,10 @@ import java.util.Optional;
 
 public class PersonnelDao implements CrudDao<Personnel> {
 
+    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Test");
     private final EntityManager entityManager;
 
     public PersonnelDao() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("Test");
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
@@ -77,23 +78,24 @@ public class PersonnelDao implements CrudDao<Personnel> {
 
     @Override
     public void delete(Long id) {
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-        try {
-            Personnel personnel = entityManager.find(Personnel.class, id);
-            if (personnel != null) {
-                entityTransaction.begin();
-                entityManager.remove(personnel);
-                entityTransaction.commit();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
+            try {
+                Personnel personnel = entityManager.find(Personnel.class, id);
+                if (personnel != null) {
+                    entityTransaction.begin();
+                    entityManager.remove(personnel);
+                    entityTransaction.commit();
+                }
+            } catch (Exception e) {
+                if (entityTransaction.isActive()) {
+                    entityTransaction.rollback();
+                }
+                throw e;
             }
-        } catch (Exception e) {
-            if (entityTransaction.isActive()) {
-                entityTransaction.rollback();
-            }
-            throw e;
         }
-    }
 
-    public void deleteByNationalCode(Long nationalCode) {
+
+        public void deleteByNationalCode(Long nationalCode) {
         EntityTransaction entityTransaction = entityManager.getTransaction();
         try {
             Optional<Personnel> personnel = findByNationalCode(nationalCode);

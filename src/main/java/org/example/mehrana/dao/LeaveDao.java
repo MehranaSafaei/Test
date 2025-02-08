@@ -6,7 +6,6 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
-import org.example.mehrana.exception.DuplicateNationalCodeException;
 import org.example.mehrana.exception.SaveRecordException;
 
 import java.time.LocalDate;
@@ -77,12 +76,21 @@ public class LeaveDao implements CrudDao<Leave> {
         return entityManager.createNamedQuery("selectAll", Leave.class).getResultList();
     }
 
+
+    public List<Leave> findAllByUsername(String username) {
+        return entityManager.createNamedQuery(
+                        "findLeavesByPersonnelUsername", Leave.class)
+                .setParameter("username", username)
+                .getResultList();
+    }
+
     public boolean existsByPersonnelId(Long personnelId) {
         Long count = entityManager.createNamedQuery("countExistsByPersonnelId", Long.class)
                 .setParameter("personnelId", personnelId)
                 .getSingleResult();
         return count > 0;
     }
+
 
     public Optional<Leave> findByPersonnelIdAndDateRange(long personnelId, LocalDate startDate, LocalDate endDate) {
         try {
@@ -105,7 +113,7 @@ public class LeaveDao implements CrudDao<Leave> {
 
     public List<Leave> findLeaveByPersonnelId(Long personnelId) {
         return entityManager.createNamedQuery("selectByPersonnelId", Leave.class)
-                .setParameter("personnel_id", personnelId)
+                .setParameter("personnelId", personnelId)
                 .getResultList(); // I made a mistake because getSingleResult I put
     }
 

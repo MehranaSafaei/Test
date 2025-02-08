@@ -25,7 +25,6 @@ public class LeaveService {
     private final LeaveDao leaveDao = new LeaveDao();
     private final PersonnelService personnelService = new PersonnelService();
 
-    @Transactional
     public void create(Leave entity) throws SaveRecordException {
         try {
             if (!isValidatePersonnel(entity.getPersonnel())) {
@@ -39,6 +38,12 @@ public class LeaveService {
         } catch (Exception e) {
             throw new SaveRecordException();
         }
+    }
+
+
+    public List<Leave> findAllByPersonnelName(String username) {
+        return leaveDao.findAllByUsername(username);
+
     }
 
     public void createLeave(LeaveDto leaveDto, PersonnelDto personnelDto) throws SaveRecordException {
@@ -104,15 +109,15 @@ public class LeaveService {
 
 
     public void deleteLeaveByNationalCode(long nationalCode) throws SaveRecordException, NotFoundException {
-        PersonnelDto personnel = personnelService.getByNationalCode(nationalCode);
-        if (personnel != null) {
-            leaveDao.deleteByPersonnelId(personnel.getId());
+        Optional<PersonnelDto> personnelOpt = Optional.ofNullable(personnelService.getByNationalCode(nationalCode));
+        if (personnelOpt.isPresent()) {
+            leaveDao.deleteByPersonnelId(personnelOpt.get().getId());
         } else {
-            throw new SaveRecordException("Personnel not found with National Code: "+ nationalCode);
+            throw new NotFoundException("Personnel with National Code " + nationalCode + " not found.");
         }
     }
 
-    public void approveLeave(Long leaveId, Long approverId) throws SaveRecordException {
+        public void approveLeave(Long leaveId, Long approverId) throws SaveRecordException {
         Personnel approver = personnelService.getByPersonnelId(approverId);
         Leave leave = leaveDao.findById(leaveId);
 

@@ -8,14 +8,14 @@ import org.example.mehrana.exception.*;
 import org.example.mehrana.srvice.LeaveService;
 import org.example.mehrana.srvice.PersonnelService;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
+//open,close,high,low
 
 public class Main {
     public static void main(String[] args) throws UpdateException, NotFoundException, DeleteException, SaveRecordException, DuplicateNationalCodeException, PersonnelNotFoundException, SQLException {
@@ -25,6 +25,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            try{
             System.out.println("=== Management System ===");
             System.out.println("1. Add Personnel"); //*
             System.out.println("2. Delete Personnel"); //*
@@ -164,8 +165,8 @@ public class Main {
 
                         LeaveDto leaveDto = new LeaveDto();
                         leaveDto.setLeaveDate(LocalDateTime.now());
-                        leaveDto.setStartDate(Date.valueOf(startDate).toLocalDate());
-                        leaveDto.setEndDate(Date.valueOf(endDate).toLocalDate());
+                        leaveDto.setStartDate(LocalDate.parse(startDate));
+                        leaveDto.setEndDate(LocalDate.parse(endDate));
                         leaveDto.setDescription(description);
                         leaveDto.setPersonnelId(personnel.getId());
                         leaveService.createLeave(leaveDto, personnel);
@@ -256,17 +257,34 @@ public class Main {
                     }
                     break;
                 case 10:
+                    List<Leave> personnelNameList = leaveService.findAllByPersonnelName("all");
+                    // iter
+                    for (Leave leave : personnelNameList) {
+                        showLeave(leave);
+                    }
+
+                    System.out.println("please select one of the id for delete");
+                    long id = scanner.nextLong();
+
+                    Optional<Leave> optionalLeave = personnelNameList.stream().filter(x -> x.getId() == id).findFirst();
+                    if (optionalLeave.isPresent()) {
+                        Leave leave = optionalLeave.get();
+                        leaveService.delete(leave.getId());
+                    }
+
+
                     //TODO: I should write code that if manager/admin doesn't approve , they reject request
 
-                    System.out.println("Are you sure you want to reject Leave?");
-                    System.out.println(" y/n");
-                    if (scanner.nextLine().equalsIgnoreCase("y")) {
-                        System.out.println("Enter LeaveId to reject");
-                        Long personnelNationalCode = scanner.nextLong();
-                        if (personnelService.findListByNationalCode(personnelNationalCode) != null) {
-                            leaveService.rejectLeave(leaveId,approveId,rejectionReason);
-                        }
-                    }
+//
+//                    System.out.println("Are you sure you want to reject Leave?");
+//                    System.out.println(" y/n");
+//                    if (scanner.nextLine().equalsIgnoreCase("y")) {
+//                        System.out.println("Enter LeaveId to reject");
+//                        Long personnelNationalCode = scanner.nextLong();
+//                        if (personnelService.findListByNationalCode(personnelNationalCode) != null) {
+//                            leaveService.rejectLeave(leaveId,approveId,rejectionReason);
+//                        }
+//                    }
 
                 case 0:
                     // Exit
@@ -277,9 +295,14 @@ public class Main {
 
                 default:
                     System.out.println("Invalid option. Please try again.");
+            }  } catch (Exception e) {
+                System.err.println("An error occurred: " + e.getMessage());
+                System.out.println("Returning to the main menu...");
             }
-
-            System.out.println();
         }
+    }
+
+    private static void showLeave(Leave leave) {
+        // chap leave
     }
 }
