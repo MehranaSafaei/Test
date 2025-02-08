@@ -1,7 +1,5 @@
 package org.example.mehrana.dao;
 
-import org.example.mehrana.entity.Leave;
-import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.exception.DuplicateNationalCodeException;
 import org.example.mehrana.exception.SaveRecordException;
 

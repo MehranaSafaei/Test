@@ -5,7 +5,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.example.mehrana.entity.Leave;
-import org.example.mehrana.entity.Personnel;
 import org.example.mehrana.exception.SaveRecordException;
 
 import java.time.LocalDate;

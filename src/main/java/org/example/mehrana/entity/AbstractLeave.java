@@ -1,10 +1,7 @@
 package org.example.mehrana.entity;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 
-import javax.lang.model.element.Name;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;

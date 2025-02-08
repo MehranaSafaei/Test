@@ -1,6 +1,5 @@
 package org.example.mehrana.srvice;
 
-import jakarta.transaction.Transactional;
 import org.example.mehrana.dao.LeaveDao;
 import org.example.mehrana.entity.Leave;
 import org.example.mehrana.entity.Personnel;
@@ -8,13 +7,10 @@ import org.example.mehrana.entity.dto.LeaveDto;
 import org.example.mehrana.entity.dto.PersonnelDto;
 import org.example.mehrana.entity.enums.Role;
 import org.example.mehrana.exception.NotFoundException;
-import org.example.mehrana.exception.PersonnelAlreadyHasLeaveException;
 import org.example.mehrana.exception.PersonnelNotFoundException;
 import org.example.mehrana.exception.SaveRecordException;
 import org.example.mehrana.mapper.DtoMapper;
 
-import javax.swing.text.html.Option;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +26,10 @@ public class LeaveService {
             if (!isValidatePersonnel(entity.getPersonnel())) {
                 throw new PersonnelNotFoundException();
             }
-            // Checking the repetition of leave for personnel
-            if (leaveDao.existsByPersonnelId(entity.getPersonnel().getId())) {
-                throw new PersonnelAlreadyHasLeaveException();
-            }
+//            // Checking the repetition of leave for personnel
+//            if (leaveDao.existsByPersonnelId(entity.getPersonnel().getId())) {
+//                throw new PersonnelAlreadyHasLeaveException();
+//            }
             leaveDao.create(entity);
         } catch (Exception e) {
             throw new SaveRecordException();
@@ -41,7 +37,7 @@ public class LeaveService {
     }
 
 
-    public List<Leave> findAllByPersonnelName(String username) {
+    public List<Leave> findAllByPersonnelUername(String username) {
         return leaveDao.findAllByUsername(username);
 
     }
@@ -94,7 +90,7 @@ public class LeaveService {
         throw new SaveRecordException();
     }
 
-    //TODO: I should add (findById, Role(in Personnel), LeaveToDeleteByNationalCode, findByName, findByNationalCode(that show me List)
+    //TODO: I should add (findById, Role(in Personnel), LeaveToDeleteByNationalCode, findByUsername, findByNationalCode(that show me List)
     public Leave findById(long leaveId) throws NotFoundException {
         Leave leave = leaveDao.findById(leaveId);
         if (leave == null) {
@@ -163,8 +159,8 @@ public class LeaveService {
     }
 
 
-    public List<PersonnelDto> findByName(String name) {
-        return personnelService.findByName(name);
+    public List<PersonnelDto> findByUsername(String username) {
+        return personnelService.findByUsername(username);
     }
 
     public List<PersonnelDto> findByNationalCode(long nationalCode) {
