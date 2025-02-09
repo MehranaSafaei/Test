@@ -38,8 +38,13 @@ public class Main {
                 System.out.println("10. Delete Leave "); //*
                 System.out.println("0. Exit"); //*
                 System.out.print("Please select an option (1-10): ");
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+
+                String input = scanner.nextLine();
+                if (input.matches("\\d+")) {
+                    System.out.println("Invalid input, please enter only a number ");
+                    continue;
+                }
+                int choice = Integer.parseInt(input);
 
 
                 switch (choice) {
